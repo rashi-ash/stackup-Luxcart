@@ -1,0 +1,71 @@
+{% extends "index.html" %}
+{%load static %}
+{% block content %}
+
+<style>
+    
+    .radio {
+        display: inline-block;
+        margin-right: 10px; 
+    }
+    
+    .radio input[type="radio"] {
+        display: none; 
+    }
+    
+    label.radio span  {
+        display: inline-block;
+        padding: 8px 16px; 
+        border: 2px solid #832c87;
+        color: #832c87; 
+        cursor: pointer;
+    }
+   
+    .radio input[type="radio"]:checked + span {
+        background-color: #832c87; 
+        border: 2px solid #832c87; 
+        color: #fff; 
+    }
+    
+
+</style>
+{% comment %} {% for obj in products %} {% endcomment %}
+<div class="container mt-5 mb-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="images p-3">
+                            <div class="text-center p-4"> <img id="main-image" src="{{object.image.url}}" width="250" /> </div>
+                            <div class="thumbnail text-center">  <img onclick="change_image(this)" src="{{object.image.url}}" width="70"><img onclick="change_image(this)" src="{{object.image1.url}}" width="70"> <img onclick="change_image(this)" src="{{object.image2.url}}" width="70"> </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="product p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center"> <i class="fa fa-long-arrow-left" style="color:  #832c87;"></i> <span class="ml-1"><a href="{% url 'home'%}" style="color:  #832c87;">Back</a></span> </div><a href="{% url 'cart'  %}" ><i class="fa fa-shopping-cart text-warning"></a></i>
+                            </div>
+                            <div class="mt-4 mb-3"> 
+                                <h5 class="text-uppercase">{{object.title}}</h5>
+                                <div class="price d-flex flex-row align-items-center"> <span class="act-price">${{object.price}}</span>
+                                    <div class="mx-2"> <small class="dis-price">${{object.discount}}</small>  </div>
+                                </div>
+                            </div>
+                            <p class="about">{{object.description | safe}}.</p>
+                            <div class="sizes mt-5">
+                                <h6 class="text-uppercase">Size</h6> <label class="radio"> <input type="radio" name="size" value="S" checked > <span>S</span> </label> <label class="radio"> <input type="radio" name="size" value="M"> <span>M</span> </label> <label class="radio"> <input type="radio" name="size" value="L"> <span>L</span> </label> <label class="radio"> <input type="radio" name="size" value="XL"> <span>XL</span> </label> <label class="radio"> <input type="radio" name="size" value="XXL"> <span>XXL</span> </label>
+                            </div>
+                            <div class="cart mt-4 align-items-center"> <a href="{% url 'add_cart' object.id %}" > <button class="btn text-white text-uppercase mr-2 px-4" style="background-color:  #832c87;">Add to cart</button> </a>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/productdetail.js' %}"></script>
+{% comment %} {% endfor %} {% endcomment %}
+{% endblock content %}

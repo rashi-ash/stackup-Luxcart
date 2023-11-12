@@ -1,0 +1,169 @@
+{% extends 'index.html'%}
+{%load static%}
+
+{% block content%}
+
+ <script>
+  // Function to update the total price and quantity when quantity changes
+  function updateTotalPrice(itemIndex, price) {
+    var quantityInput = document.getElementById('quantity_' + itemIndex);
+    var totalPriceElement = document.getElementById('total_price_' + itemIndex);
+    var quantity = parseInt(quantityInput.value);
+    totalPriceElement.innerText = '$' + (quantity * price).toFixed(2);
+    updateSummary();
+  }
+
+  // Function to update the overall total price and quantity in the summary
+  function updateSummary() {
+    var totalAmountElement = document.getElementById('total_amount');
+    var totalQuantityElement = document.getElementById('total_quantity');
+    var total = 0;
+    var totalQuantity = 0;
+
+    // Calculate the overall total price and quantity
+    {% for x in cart.product.all %}
+      var quantity = parseInt(document.getElementById('quantity_{{ forloop.counter0 }}').value);
+      var price = {{ x.price }};
+      total += quantity * price;
+      totalQuantity += quantity;
+    {% endfor %}
+
+    totalAmountElement.innerText = '$' + total.toFixed(2);
+    totalQuantityElement.innerText = totalQuantity;
+  }
+
+  // Call updateSummary initially to set the correct total amount and quantity
+  window.onload = function() {
+    updateSummary();
+  };
+</script> 
+
+<section class="h-100 gradient-custom">
+    <div class="container py-5">
+      <div class="row d-flex justify-content-center my-4">
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Cart - {{cart.product.all.count}} items</h5>
+            </div>
+            <div class="card-body">
+              <!-- Single item -->
+              {% for x in cart.product.all %}
+              <div class="row">
+                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                  <!-- Image -->
+                  <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                    <img src="{{x.image.url}}"
+                      class="w-100" alt="Blue Jeans Jacket" />
+                    <a href="#!">
+                      <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                    </a>
+                  </div>
+                  <!-- Image -->
+                </div>
+  
+                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                  <!-- Data -->
+                  <p><strong>{{x.title}}</strong></p>
+                  <p>{{x.description |safe}}</p>
+                  <a href="{% url 'delete_cart' x.id %}"><button type="button" class="btn  btn-sm me-1 mb-2 text-white" data-mdb-toggle="tooltip"
+                    title="Remove item"  style="background-color:  #832c87;">
+                    <i class="fas fa-trash"></i>
+                  </button></a>
+                  <button type="button" class="btn text-white btn-sm mb-2" data-mdb-toggle="tooltip"
+                    title="Move to the wish list" style="background-color:  #f693c5;">
+                    <i class="fas fa-heart"></i>
+                  </button>
+                  <!-- Data -->
+                </div>
+  
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                  <div class="d-flex mb-4" style="max-width: 300px">
+                    <button class="btn  px-3 me-2 text-white"
+                      onclick="var input = this.parentNode.querySelector('input[type=number]'); input.stepDown(); updateTotalPrice({{ forloop.counter0 }}, {{ x.price }});"  style="background-color:  #832c87;">
+                      <i class="fas fa-minus"></i>
+                    </button>
+            
+                    <div class="form-outline">
+                      <input id="quantity_{{ forloop.counter0 }}" min="1" name="quantity" value="1" type="number" class="form-control" onchange="updateTotalPrice({{ forloop.counter0 }}, {{ x.price }})" />
+                      <label class="form-label" for="form1">Quantity</label>
+                    </div>
+            
+                    <button class="btn  px-3 ms-2 text-white"
+                      onclick="var input = this.parentNode.querySelector('input[type=number]'); input.stepUp(); updateTotalPrice({{ forloop.counter0 }}, {{ x.price }});"  style="background-color:  #832c87;">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                
+                  <p class="text-start text-md-center">
+                    <strong>Total Price: <span id="total_price_{{ forloop.counter0 }}">${{ x.price }}</span></strong>
+                  </p>
+                </div>
+              </div>
+              <!-- Single item -->
+  
+              <hr class="my-4" />
+              
+              {% endfor %}
+            </div>
+          </div>
+          <div class="card mb-4">
+            <div class="card-body">
+              <p><strong>Expected shipping delivery</strong></p>
+              <p class="mb-0">14.11.2023 - 29.11.2023</p>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body">
+              <p><strong>We accept</strong></p>
+              <img class="me-2" width="45px"
+                src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+                alt="Visa" />
+              <img class="me-2" width="45px"
+                src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+                alt="American Express" />
+              <img class="me-2" width="45px"
+                src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+                alt="Mastercard" />
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Summary</h5>
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Total quantity
+                  <span id="total_quantity">0</span>
+                </li>
+                
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                  Shipping
+                  <span>Gratis</span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                  <div>
+                    <strong>Total amount</strong>
+                    <strong>
+                      <p class="mb-0">(including VAT)</p>
+                    </strong>
+                  </div>
+                  <span><strong id="total_amount">$53.98</strong></span>
+                </li>
+              </ul>
+  
+              <button type="button" class="btn text-white btn-lg btn-block"  style="background-color:  #832c87;">
+                Go to checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock%}
