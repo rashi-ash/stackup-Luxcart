@@ -1,4 +1,7 @@
-echo "Building the project.."
+#!/bin/bash
+# Build the project
+
+echo "Building the project..."
 python3.9 -m install -r requirements.txt
 
 echo "Make Migrations.."
